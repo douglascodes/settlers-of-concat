@@ -1,0 +1,13 @@
+{
+  "StartAt": "RollDie",
+  "States": {
+    "RollDie": {
+      "Type": "Task",
+      "Resource": "##settlers_roll_die ARN##",
+      "Parameters": {
+                "die_count": "2D6"
+            },
+      "End": true
+    }
+  }
+}
