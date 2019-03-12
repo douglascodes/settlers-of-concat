@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     show_work = False
 
     if 'ping' in event:
-        return {'output': 'pong'}
+        return 'pong'
 
     if 'show_work' in event:
         show_work = event['show_work']
@@ -19,15 +19,10 @@ def lambda_handler(event, context):
     die_counts = parse_die(event['die_count'])
 
     if show_work:
-        return {
-            'statusCode': 200,
-            'output': json.dumps(
+        return json.dumps(
                 [item for sublist in list([roll_die(d, show_work) for d in die_counts]) for item in sublist])
-        }
-    return {
-        'statusCode': 200,
-        'output': json.dumps(sum([roll_die(d) for d in die_counts]))
-    }
+        
+    return  json.dumps(sum([roll_die(d) for d in die_counts]))
 
 
 def parse_die(die_count: str):

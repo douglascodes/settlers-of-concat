@@ -1,13 +1,66 @@
 {
-  "StartAt": "RollDie",
+  "StartAt": "GenerateGameId",
   "States": {
+    "GenerateGameId": {
+      "Type": "Task",
+            "Resource": "ARN##Settlers_UUID##",
+      "Next": "SetTurnZero"
+    },
+    "SetTurnZero": {
+      "Type": "Pass",
+      "Parameters": {
+        "game_id.$": "$.uuid",
+        "turn_number": "0"
+      },
+      "Next": "SaveGameState"
+    },
+    "SaveGameState": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "ResultPath": null,
+      "Parameters": {
+        "TableName": "settlers_of_concat",
+        "Item": {
+          "game_id": {
+            "S.$": "$.game_id"
+          },
+          "turn_number": {
+            "N.$": "$.turn_number"
+          }
+        }
+      },
+      "Next": "RollDie"
+    },
     "RollDie": {
       "Type": "Task",
-      "Resource": "##settlers_roll_die ARN##",
+      "Resource": "ARN##Settlers_Roll_Die##",
       "Parameters": {
-                "die_count": "2D6"
-            },
+        "die_count": "2D6"
+      },
+      "ResultPath": "$.dice_roll",
+      "Next": "AdvanceTurn"
+    },
+    "AdvanceTurn": {
+      "Type": "Task",
+      "Resource": "ARN##Settlers_AdvanceTurn##",
+      "ResultPath": "$.turn_number",
+      "Next": "ChoiceEndGame"
+    },
+    "ChoiceEndGame": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.turn_number",
+          "StringEquals": "30",
+          "Next": "EndState"
+        }
+      ],
+      "Default": "SaveGameState"
+    },
+    "EndState": {
+      "Type": "Pass",
       "End": true
     }
   }
 }
+      
