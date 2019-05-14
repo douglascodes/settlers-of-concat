@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         return json.dumps(
                 [item for sublist in list([roll_die(d, show_work) for d in die_counts]) for item in sublist])
         
-    return  json.dumps(sum([roll_die(d) for d in die_counts]))
+    return json.dumps(sum([roll_die(d) for d in die_counts]))
 
 
 def parse_die(die_count: str):

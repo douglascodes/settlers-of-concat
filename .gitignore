@@ -166,3 +166,6 @@ ENV/
 .DS_STORE
 
 .vscode/
+create_layer.sh
+lambda_settlers_layer.zip
+
